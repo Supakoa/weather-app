@@ -5,7 +5,10 @@
         <img class="weather-img" alt="weather-img" src="{{ pathImg }}" />
         <h1 class="temperature">{{ tempCurrent }}</h1>
         <div class="btn-toggle">
-          <a id="celsius" class="btn-temperature-switch active" (click)="onToggle('C')"
+          <a
+            id="celsius"
+            class="btn-temperature-switch active"
+            (click)="onToggle('C')"
             >&#176;C</a
           >
           <div class="line-between-btn"></div>
@@ -25,3 +28,6 @@
     </div>
   </div>
 </div>
+
+<!-- The routed views render in the <router-outlet>-->
+<router-outlet></router-outlet>
