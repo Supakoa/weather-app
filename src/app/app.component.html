@@ -1,29 +1,31 @@
 <div class="wrapper">
   <div class="card w-50 p-4">
-    <div class="card-body row">
-      <div class="weather-temp col">
-        <img class="weather-img" alt="weather-img" src="{{ pathImg }}" />
-        <h1 class="temperature">{{ tempCurrent }}</h1>
-        <div class="btn-toggle">
-          <a
-            id="celsius"
-            class="btn-temperature-switch active"
-            (click)="onToggle('C')"
-            >&#176;C</a
-          >
-          <div class="line-between-btn"></div>
-          <a
-            id="fahrenheit"
-            class="btn-temperature-switch"
-            (click)="onToggle('F')"
-            >&#176;F</a
-          >
+    <div class="card-body">
+      <div class="row">
+        <div class="weather-temp col-12 col-lg-7">
+          <img class="weather-img" alt="weather-img" src="{{ pathImg }}" />
+          <h1 class="temperature">{{ tempCurrent }}</h1>
+          <div class="btn-toggle">
+            <a
+              id="celsius"
+              class="btn-temperature-switch active"
+              (click)="onToggle('C')"
+              >&#176;C</a
+            >
+            <div class="line-between-btn"></div>
+            <a
+              id="fahrenheit"
+              class="btn-temperature-switch"
+              (click)="onToggle('F')"
+              >&#176;F</a
+            >
+          </div>
         </div>
-      </div>
-      <div class="weather-info col">
-        <p>Precipitation: {{ weather?.precipitation }}%</p>
-        <p>Humidity: {{ weather?.humidity }}%</p>
-        <p>Wind: {{ weather?.wind }} {{ weather?.wind_type }}</p>
+        <div class="weather-info col-12 col-lg-5">
+          <p><strong>Precipitation</strong> {{ weather?.precipitation }}%</p>
+          <p><strong>Humidity</strong> {{ weather?.humidity }}%</p>
+          <p><strong>Wind</strong> {{ weather?.wind }} {{ weather?.wind_type }}</p>
+        </div>
       </div>
     </div>
   </div>

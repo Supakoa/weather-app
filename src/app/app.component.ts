@@ -29,8 +29,7 @@ export class AppComponent implements OnInit {
 
   constructor(private ds: DataService, private callWs: ConfigService) {}
 
-  ngOnInit(): void {
-    this.setLatLon();
+  async ngOnInit(): Promise<void> {
     this.addWeatherFormApi();
   }
 
@@ -49,8 +48,9 @@ export class AppComponent implements OnInit {
     }
   }
 
-  addWeatherFormApi(): void {
-    this.callWs.getCallOpenWeather(this.position).subscribe(
+  async addWeatherFormApi(): Promise<void> {
+    let position: Position = await this.setLatLon().then((p) => p);
+    this.callWs.getCallOpenWeather(position ?? this.position).subscribe(
       (res) => {
         const { weather, wind, main } = res;
         this.tempCurrent = Math.floor(main.temp);
@@ -72,15 +72,23 @@ export class AppComponent implements OnInit {
     );
   }
 
-  setLatLon(): void {
-    this.getPosition()
-      .then((pos) => {
-        this.position.lat = pos.lat;
-        this.position.lon = pos.lng;
-      })
-      .catch((err) =>
-        console.error("sorry we can't get your latitude and longtitude \n", err)
-      );
+  setLatLon(): Promise<Position> {
+    return new Promise((resolv, reject) => {
+      this.getPosition()
+        .then((pos) => {
+          const { lat, lng } = pos;
+          console.log(`Your latitude: ${lat}, longtitude: ${lng}`);
+          const position: Position = { lat, lon: lng };
+          resolv(position);
+        })
+        .catch((err) => {
+          console.error(
+            "sorry we can't get your latitude and longtitude \n",
+            err
+          );
+          reject(err);
+        });
+    });
   }
 
   getPosition(): Promise<any> {
@@ -109,31 +117,23 @@ export class AppComponent implements OnInit {
     }
   }
 
-  getWeatherById(id: string): void {
-    this.ds.getWeatherByCallBack((res: any) => {
-      res.docs.forEach((item: any) => {
-        const data = item.data();
-        if (data?.id === id) {
-          this.weather.create_date = data?.create_date;
-          this.weather.humidity = data?.humidity;
-          this.weather.precipitation = data?.precipitation;
-          this.weather.temp_type = data?.temp_type;
-          this.weather.temperature = data?.temperature;
-          this.weather.weather = data?.weather;
-          this.weather.wind = data?.wind;
-          this.weather.wind_type = data?.wind_type;
-        }
-      });
-    });
-  }
-
   getLastCreate(): void {
     this.ds.getAllWeather().subscribe((weathers) => {
-      weathers.map((weather) => {
-        // const current: any;
-        const { doc } = weather.payload;
-        console.log(doc);
+      let last: any | undefined;
+      weathers.forEach((weather) => {
+        const tmp: any = weather?.payload?.doc?.data();
+        if (!last) {
+          last = tmp;
+        } else {
+          if (tmp.create_date > last.create_date) {
+            last = tmp;
+          }
+        }
       });
+
+      this.weather = { ...last };
+      this.tempCurrent = Math.floor(Number(this.weather.temperature) ?? 0);
+      this.pathImg = `../assets/images/${this.weather.weather}.png`;
     });
   }
 }
